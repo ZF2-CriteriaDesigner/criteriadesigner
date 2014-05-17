@@ -1,0 +1,23 @@
+<?php 
+/* @var $classroom \ClassRoom\Entity\ClassRoomEntity */
+?>
+
+<table class="table">
+  <tr>
+    <th>Id</th>
+    <th>Label</th>
+    <th>Level</th>
+    <th>Section</th>
+    <th>Students (count)</th>
+  </tr>
+  <?php foreach($classrooms as $classroom) : ?>
+  <tr>
+    <td><?php echo $classroom->getIdClassRoom(); ?></td>
+    <td><?php echo $classroom->getLabelClass(); ?></td>
+    <td><?php echo $classroom->getLevelClass(); ?></td>
+    <td><?php echo $classroom->getSectionClass(); ?></td>
+    <td><?php echo $classroom->getStudentList()->count(); ?></td>
+  </tr>
+  <?php endforeach; ?>
+</table>
+

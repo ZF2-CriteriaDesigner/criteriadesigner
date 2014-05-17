@@ -1,0 +1,20 @@
+#main {    
+    width: 800px;
+}
+.classDef {
+    margin: 10px;
+    border-bottom: 1px solid #000;
+}
+
+.classDef label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.classDef  .actions {
+    float: right;
+}
+
+.classDef div.content {
+    margin: 5px;
+}

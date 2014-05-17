@@ -1,0 +1,143 @@
+<?php 
+$this->headLink()->appendStylesheet($this->basePath() . '/css/criteriadesigner-v0.1.css');
+$this->headLink()->appendStylesheet($this->basePath() . '/css/bootstrap-datetimepicker.css');
+$this->headLink()->appendStylesheet($this->basePath() . '/css/select2.css');
+
+$this->headScript()->appendFile($this->basePath() . '/js/bootstrap.min.js');
+$this->headScript()->appendFile($this->basePath() . '/js/criteriadesigner-v0.1.js');
+$this->headScript()->appendFile($this->basePath() . '/js/bootstrap-datetimepicker.js');
+$this->headScript()->appendFile($this->basePath() . '/js/select2.js');
+
+use CriteriaDesigner\Collections\Expr\CompositeExpression;
+use CriteriaDesigner\Collections\CriteriaEx;
+use CriteriaDesigner\Collections\ArrayCollectionEx;
+
+$exprBuilder = CriteriaEx::advancedExpr();
+
+if ($this->criteriaArray) {
+    $criteria = new CriteriaEx();
+
+    $cd = $this->criteriaArray;
+    // echo sprintf('<pre>%s</pre>', print_r($cd, true));
+    $criteria->fromArray($cd);
+    $nomEntite = $cd["entity"];
+    
+    $listeEntite = new ArrayCollectionEx($this->entites);
+    $resultats = $listeEntite->matchingEx($criteria);
+
+    if ($nomEntite == 'classEntity') {
+        $template = 'criteriadesigner/examples/allclassrooms';
+        $params = array('classrooms' => $resultats);
+    }
+    else {
+        $template = 'criteriadesigner/examples/allstudents';
+        $params = array('students' => $resultats);        
+    }
+    
+}
+?>
+
+<style>
+    #results { margin: 10px; }
+    #test { width: 1000px; margin: 10px; }
+</style>
+
+<h1>Criteria Designer</h1>
+
+<form id="formGo" name="formCriteria" class="form-inline" action="<?php echo $this->basePath() . '/criteriadesigner/letsgo'; ?>" method="post">
+<label id="labelEntity" for="selectEntity"><b>Select Entity</b></label>
+<select id="selectEntity"><option value="classEntity">ClassEntity</option><option value="studentEntity">StudentEntity</option></select>
+<button id="create" type="button" class="btn">Create designer</button>
+<button id="go" type="submit" class="btn btn-primary">Go!</button>
+<input id="results" name="formCriteria[data]" type="hidden"/>
+</form>
+
+<div id="test" class="criteriadesigner"></div>
+<br>
+<div id="searchResults">
+<?php 
+if ($this->criteriaArray) {
+    $nb = count($resultats);
+    echo $nb != 0 ? sprintf("<b>Total: %s entries matching the filter found.</b><br>", $nb) : "<b>No entries matching the filter found.</b><br>";
+    echo $this->partial($template, $params);
+}
+?>
+</div>
+
+<script type="text/javascript">
+
+var hasCriteria = false;
+
+<?php if ($this->data) : ?>
+var defaultCriteria = <?php echo $this->data; ?>;
+$('#selectEntity').val(defaultCriteria.entity);
+hasCriteria = true;
+<?php else: ?>    
+var defaultCriteria = {"entity":"classEntity","selectOperator":"AND","comparisons":[]};
+<?php endif; ?>
+
+/*
+var schema = {
+    "classEntity":[
+        {"field":"labelClass","type":"string","text":"Label"},
+        {"field":"levelClass","type":"list","text":"Level","options":["Level 1","Level 2","Level 3"]},
+        {"field":"sectionClass","type":"list","text":"Section","options":["Section 1","Section 2","Section 3"]},
+        {"field":"studentList","type":"collection","text":"Student (count)","entity":"studentEntity"}],
+    "studentEntity":[
+        {"field":"lastnameStudent","type":"string","text":"Last Name"},
+        {"field":"firstnameStudent","type":"string","text":"First Name"},
+        {"field":"birthdayStudent","type":"date","text":"Birthday"},
+        {"field":"genderStudent","type":"list","text":"Gender","options":["Male","Female"]},
+        {"field":"classEntity","type":"entity","text":"Class","entity":"classEntity"}]
+};
+*/
+
+var schema = {"classEntity":[{"field":"labelClass","type":"string","text":"Label"},{"field":"levelClass","type":"list","text":"Level","options":["Level 1","Level 2","Level 3"]},{"field":"sectionClass","type":"list","text":"Section","options":["Section 1","Section 2","Section 3"]},{"field":"studentList","type":"collection","text":"Student (count)","entity":"studentEntity"}],"studentEntity":[{"field":"lastnameStudent","type":"string","text":"Last Name"},{"field":"firstnameStudent","type":"string","text":"First Name"},{"field":"birthdayStudent","type":"date","text":"Birthday"},{"field":"genderStudent","type":"list","text":"Gender","options":["Male","Female"]},{"field":"classRoomStudent","type":"entity","text":"Class","entity":"classEntity"}]};
+options = {
+		"schema": schema,
+		"criteria": defaultCriteria
+};
+
+
+$(document).ready(function() {
+	$('#create').click(function (e) {
+		if (hasCriteria) {
+			hasCriteria = false;
+			$(this).text("Create designer");
+			$('#test').criteriadesigner('destroy');
+			$('#go').hide();
+			$('#selectEntity').removeAttr('disabled');
+			$('#searchResults').html(null);
+		}
+		else {
+			$(this).text("Destroy designer");
+			hasCriteria = true;
+			var selectEntity = $('#selectEntity').val();
+			options.criteria = {"entity":selectEntity,"selectOperator":"AND","comparisons":[]};
+			$('#test').criteriadesigner(options);
+			$('#go').show();
+			$('#selectEntity').attr('disabled', 'disabled');
+		}
+	    
+	});
+	
+	if (hasCriteria) {
+	    $('#test').criteriadesigner(options);
+		$('#go').show();
+		$('#create').text("Destroy designer");
+		$('#selectEntity').attr('disabled', 'disabled');
+	}
+	else {
+		$('#go').hide();
+		$('#create').text("Create designer");
+		
+	}
+	
+	$('#go').click(function(e) {
+		e.preventDefault();
+		var jsonText = JSON.stringify($('#test').criteriadesigner('export'));
+		$('#results').val(jsonText);
+		$('#formGo').submit();
+	});
+});
+</script>

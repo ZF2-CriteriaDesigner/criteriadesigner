@@ -1,0 +1,30 @@
+<?php 
+$this->headLink()->appendStylesheet($this->basePath() . '/css/schemabuilder-v0.1.css');
+$this->headScript()->appendFile($this->basePath() . '/js/schemabuilder-v0.1.js');
+?>
+
+<style>
+    #results { margin: 10px; }
+    #test { width: 1000px; margin: 10px; }
+</style>
+
+<h1>Schema Builder</h1>
+
+<button id="results" class="btn">Get Results</button>
+<br>
+<div id="resultsDiv"></div>
+<hr>
+<div id="test" class="schemabuilder"></div>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+var test1 = {"classEntity":[{"field":"labelClass","type":"string","text":"Label"},{"field":"levelClass","type":"list","text":"Level","options":["Level 1","Level 2","Level 3"]},{"field":"sectionClass","type":"list","text":"Section","options":["Section 1","Section 2","Section 3"]},{"field":"studentList","type":"collection","text":"Student (count)","entity":"studentEntity"}],"studentEntity":[{"field":"lastnameStudent","type":"string","text":"Last Name"},{"field":"firstnameStudent","type":"string","text":"First Name"},{"field":"birthdayStudent","type":"date","text":"Birthday"},{"field":"genderStudent","type":"list","text":"Gender","options":["Male","Female"]},{"field":"classRoomStudent","type":"entity","text":"Class","entity":"classEntity"}]};
+    $('#test').schemabuilder({"schema": test1});
+    
+	$('#results').click(function() { 
+		var jsonText = JSON.stringify($('#test').schemabuilder('export'));
+		$('#resultsDiv').html($('<pre/>').html(jsonText)).css("margin", "25px 25px 0 25px");
+	});
+});
+</script>

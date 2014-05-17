@@ -1,0 +1,30 @@
+<?php 
+/* @var $student \CriteriaDesigner\Entity\StudentEntity */
+?>
+
+<table class="table">
+  <tr>
+    <th>Id</th>
+    <th>Firstname</th>
+    <th>Lastename</th>
+    <th>Gender</th>
+    <th>Birthday</th>
+    <th>Class Label</th>
+    <th>Class Level</th>
+    <th>Class Section</th>
+  </tr>
+  <?php foreach($students as $student) : ?>
+  <tr>
+    <td><?php echo $student->getIdStudent(); ?></td>
+    <td><?php echo $student->getFirstnameStudent(); ?></td>
+    <td><?php echo $student->getLastnameStudent(); ?></td>
+    <td><?php echo $student->getGenderStudent(); ?></td>
+    <td><?php echo date_format($student->getBirthdayStudent(), 'Y-m-d'); ?></td>
+    <td><?php echo $student->getClassRoomStudent()->getLabelClass(); ?></td>
+    <td><?php echo $student->getClassRoomStudent()->getLevelClass(); ?></td>
+    <td><?php echo $student->getClassRoomStudent()->getSectionClass(); ?></td>
+  </tr>
+  <?php endforeach; ?>
+</table>
+
+

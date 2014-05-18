@@ -1,7 +1,7 @@
 Criteria Designer
 =================
 
-Visual criteria designer form zf2 and doctrine orm 2
+Visual criteria designer form ZF2 and Doctrine ORM 2
 
 Introduction
 ------------

@@ -32,3 +32,5 @@ You only have this little things:
 ```
 
 Enjoy
+
+'If you love it, dont forget to stargaze it'
